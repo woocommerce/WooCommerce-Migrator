@@ -2,7 +2,7 @@
 /**
  * Plugin Name:     Migrate to Woo
  * Description:     CLI commands to migrate data to WooCommerce from other platforms like Shopify.
- * Version:         0.0.1
+ * Version:         1.0.0
  *
  * @package         Migrate to Woo
  */

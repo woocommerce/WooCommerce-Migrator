@@ -36,7 +36,7 @@ class WooCommerce_Product_Importer {
 	 * @param array $wc_data Standardized product data array from a Platform Mapper.
 	 * @return int|WP_Error The WC Product ID on success, WP_Error on failure.
 	 */
-	public function import_product( array $wc_data ): int|WP_Error {
+	public function import_product( array $wc_data ) {
 		try {
 			$original_product_id = $wc_data['original_product_id'] ?? null;
 			if ( ! $original_product_id ) {

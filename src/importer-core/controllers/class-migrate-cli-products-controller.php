@@ -5,12 +5,15 @@ require_once __DIR__ . '/../interfaces/interface-platform-mapper.php';
 require_once __DIR__ . '/../../platforms/shopify/class-shopify-fetcher.php';
 require_once __DIR__ . '/../../platforms/shopify/class-shopify-mapper.php';
 require_once __DIR__ . '/../importers/class-woocommerce-product-importer.php';
+require_once __DIR__ . '/../ImportSession.php';
+require_once __DIR__ . '/../DataLiberationException.php';
 
 class Migrate_CLI_Products {
 
 	private $fields;
 	private $assoc_args;
 	private $saved_filters; // Added for disable/restore hooks
+	private $session;
 
 	private $verbose;
 
@@ -39,6 +42,62 @@ class Migrate_CLI_Products {
 		$args = $this->parse_and_validate_args( $assoc_args, $available_platforms );
 		if ( ! $args ) {
 			return; // Error handled in parse_and_validate_args
+		}
+
+		// --- Session Management ---
+		if ( ! class_exists( '\WordPress\DataLiberation\Importer\ImportSession' ) ) {
+			WP_CLI::error( 'ImportSession class not found. Please ensure the required libraries are available.' );
+			return;
+		}
+
+		$active_session = WordPress\DataLiberation\Importer\ImportSession::get_active();
+		if ( $active_session && ! $active_session->is_finished() ) {
+			$imported_count = $active_session->count_all_imported_entities();
+			$total_count    = $active_session->get_total_number_of_entities()['post'] ?? 0;
+			$start_time     = get_date_from_gmt( date( 'Y-m-d H:i:s', $active_session->get_started_at() ) );
+
+			$warning_message = sprintf(
+				'An unfinished import session was found (Started: %s). Progress: %d / %d products imported.',
+				$start_time,
+				$imported_count,
+				$total_count
+			);
+			WP_CLI::warning( $warning_message );
+			
+			$should_resume = $args->resume;
+			if ( ! $should_resume ) {
+				WP_CLI::out( 'Do you want to resume this session? [y/n] ' );
+				$answer = strtolower( trim( fgets( STDIN ) ) );
+				if ( 'y' === $answer ) {
+					$should_resume = true;
+				} else {
+					$should_resume = false;
+				}
+			}
+
+			if ( $should_resume ) {
+				$this->session = $active_session;
+				WP_CLI::success( 'Resuming previous import session.' );
+			} else {
+				// User declined to resume. Archive the old session and create a new one.
+				$active_session->archive();
+				WP_CLI::line( 'Previous session archived. Starting a new import session.' );
+				$this->session = WordPress\DataLiberation\Importer\ImportSession::create(
+					[
+						'data_source' => $args->platform,
+						'file_name'   => 'Product Import - ' . current_time( 'mysql' ),
+					]
+				);
+			}
+		} else {
+			// No active session found, so start a new one.
+			WP_CLI::line( 'Starting a new import session.' );
+			$this->session = WordPress\DataLiberation\Importer\ImportSession::create(
+				[
+					'data_source' => $args->platform,
+					'file_name'   => 'Product Import - ' . current_time( 'mysql' ),
+				]
+			);
 		}
 
 		// --- Disable Hooks ---
@@ -73,18 +132,27 @@ class Migrate_CLI_Products {
 		if ( isset( $args->target_product_ids ) ) $count_args['ids'] = implode( ',', $args->target_product_ids ); // Pass IDs if set
 		
 		$total_count = $fetcher->fetch_total_count( $count_args );
-		WP_CLI::line( 'Total entities found: ' . $total_count );
-		if ( null === $total_count ) {
-			WP_CLI::warning( 'Could not retrieve total count. Progress bar may be inaccurate.' );
-			$total_count = 0; // Set to 0 for progress bar if unknown
+		if ( $this->session && ( ! $this->session->get_total_number_of_entities() || ! ( $this->session->get_total_number_of_entities()['post'] ?? 0 ) ) ) {
+			$this->session->bump_total_number_of_entities( [ 'post' => $total_count ] );
 		}
-		$progress = \WP_CLI\Utils\make_progress_bar( 'Importing Products from ' . $available_platforms[$platform_key]['label'], $total_count );
+		$total_in_session = $total_count;
+		WP_CLI::line( 'Total entities found: ' . $total_in_session );
+
+		if ( null === $total_in_session ) {
+			WP_CLI::warning( 'Could not retrieve total count. Progress bar may be inaccurate.' );
+			$total_in_session = 0; // Set to 0 for progress bar if unknown
+		}
+		$progress = \WP_CLI\Utils\make_progress_bar( 'Importing Products from ' . $available_platforms[ $platform_key ]['label'], $total_in_session );
+		if ( $this->session ) {
+			$progress->tick( $this->session->count_all_imported_entities(), false );
+		}
 
 		// --- Main Import Loop ---
 		$overall_start_time    = microtime( true );
 		$total_processed_count = 0; // Controller loop counter
 		$limit_remaining       = $args->limit;
-		$after_cursor          = $args->after_cursor;
+		$session_cursor        = $this->session ? $this->session->get_reentrancy_cursor() : null;
+		$after_cursor          = ! empty( $session_cursor ) ? $session_cursor : $args->after_cursor;
 		$has_next_page         = true;
 
 		do {
@@ -103,7 +171,13 @@ class Migrate_CLI_Products {
 				// Pass other platform-specific args if needed
 			];
 			if ( $this->verbose ) WP_CLI::line( sprintf( 'Fetching next %d products... (Cursor: %s)', $batch_limit, $after_cursor ?? 'start' ) );
-			$batch_data = $fetcher->fetch_batch( $fetch_args );
+			
+			try {
+				$batch_data = $fetcher->fetch_batch( $fetch_args );
+			} catch ( Exception $e ) {
+				WP_CLI::warning( sprintf( 'Error fetching batch: %s', $e->getMessage() ) );
+				continue;
+			}
 
 			if ( empty( $batch_data['items'] ) ) {
 				WP_CLI::line( 'No more products found in this batch.' );
@@ -113,8 +187,7 @@ class Migrate_CLI_Products {
 
 			if ( $this->verbose ) WP_CLI::line( sprintf( 'Fetched %d products.', count( $batch_data['items'] ) ) );
 
-			// 2. Process the fetched batch
-			// Pass fetcher/mapper/importer instances to batch processing
+
 			$batch_result = $this->process_product_batch(
 				$batch_data['items'], // Pass raw items
 				$args,                // Pass command args
@@ -129,6 +202,9 @@ class Migrate_CLI_Products {
 			// to ensure we respect the overall limit even if some items are skipped.
 			$limit_remaining -= count( $batch_data['items'] ); 
 			$after_cursor = $batch_data['cursor']; // Get cursor from fetcher response
+			if ( $this->session ) {
+				$this->session->set_reentrancy_cursor( $after_cursor );
+			}
 			$has_next_page = $batch_data['hasNextPage']; // Get hasNextPage from fetcher response
 
 			if ( $this->verbose ) {
@@ -147,6 +223,12 @@ class Migrate_CLI_Products {
 		// --- Finalize ---
 		$progress->finish();
 		$this->print_summary( $total_processed_count, $overall_start_time, $importer ); // Pass importer for summary
+
+		if ( $this->session && ! $has_next_page ) {
+			$this->session->set_stage( \WordPress\DataLiberation\Importer\ImportSession::STAGE_FINISHED );
+			WP_CLI::success( 'Import session marked as complete.' );
+		}
+
 		$this->maybe_restore_hooks( $args->disable_hooks );
 	}
 
@@ -177,7 +259,7 @@ class Migrate_CLI_Products {
 		// --- Basic Arguments ---
 		$args = new stdClass();
 		$args->limit              = isset( $assoc_args['limit'] ) ? (int) $assoc_args['limit'] : PHP_INT_MAX;
-		$args->perpage            = isset( $assoc_args['perpage'] ) ? min( (int) $assoc_args['perpage'], 250 ) : 100;
+		$args->perpage            = isset( $assoc_args['perpage'] ) ? min( (int) $assoc_args['perpage'], 250 ) : 20;
 		$args->skip_update        = isset( $assoc_args['skip-update'] );
 		$args->exclude_ids        = isset( $assoc_args['exclude'] ) ? explode( ',', $assoc_args['exclude'] ) : array();
 		$args->after_cursor    	  = isset( $assoc_args['next'] ) ? $assoc_args['next'] : null;
@@ -185,6 +267,7 @@ class Migrate_CLI_Products {
 		$this->verbose            = isset( $assoc_args['verbose'] );
 		$args->disable_hooks      = isset( $assoc_args['disable-hooks'] );
 		$args->remove_orphans     = isset( $assoc_args['remove-orphans'] ); // Keep for importer potentially
+		$args->resume             = isset( $assoc_args['resume'] );
 
 		// --- Variants Per Product ---
 		$variants_per_product_default = 100;
@@ -276,6 +359,10 @@ class Migrate_CLI_Products {
 			if ( $process_result['processed'] ) {
 				$processed_count_in_batch++;
 			}
+		}
+
+		if ( $this->session ) {
+			$this->session->bump_imported_entities_counts( [ 'post' => $processed_count_in_batch ] );
 		}
 
 		return [

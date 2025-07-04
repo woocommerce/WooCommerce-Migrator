@@ -1,0 +1,10 @@
+/vendor
+/node_modules
+composer.lock
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.log
+wp-tests-config.php
+.phpunit.result.cache 

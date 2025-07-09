@@ -1,10 +1,11 @@
 /vendor
 /node_modules
-composer.lock
 .DS_Store
 Thumbs.db
 .idea
 .vscode
 *.log
+*.bak
 wp-tests-config.php
+phpcs.xml
 .phpunit.result.cache 

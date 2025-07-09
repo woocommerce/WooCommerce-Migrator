@@ -148,7 +148,8 @@ install_db() {
 
 	# If we're trying to connect to a socket we want to handle it differently.
 	if [[ "$DB_HOST" == *.sock ]]; then
-		# create database using the socket
+		# Drop the existing database if it exists, then create it.
+		mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS" --socket="$DB_HOST" || true
 		mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS" --socket="$DB_HOST"
 	else
 		# Decide whether or not there is a port.
@@ -159,7 +160,8 @@ install_db() {
 			EXTRA=" --host=$DB_HOST --protocol=tcp"
 		fi
 
-		# create database
+		# Drop the existing database if it exists, then create it.
+		mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA || true
 		mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 	fi
 }

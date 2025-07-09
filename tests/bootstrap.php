@@ -5,6 +5,8 @@
  * @package WooCommerce\Migrator
  */
 
+declare( strict_types=1 );
+
 // Load the Composer autoloader to make all dependencies available.
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
@@ -27,4 +29,4 @@ if ( ! file_exists( $wp_tests_dir . '/includes/functions.php' ) ) {
 require_once $wp_tests_dir . '/includes/functions.php';
 
 // Start up the WP testing environment.
-require $wp_tests_dir . '/includes/bootstrap.php'; 
+require $wp_tests_dir . '/includes/bootstrap.php';

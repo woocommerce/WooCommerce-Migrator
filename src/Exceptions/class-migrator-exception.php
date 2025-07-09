@@ -5,6 +5,8 @@
  * @package WooCommerce\Migrator\Exceptions
  */
 
+declare( strict_types=1 );
+
 namespace WooCommerce\Migrator\Exceptions;
 
 /**

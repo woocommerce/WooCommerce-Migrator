@@ -5,13 +5,17 @@
  * @package WooCommerce\Migrator
  */
 
+declare( strict_types=1 );
+
+namespace WooCommerce\Migrator\Tests;
+
 use WooCommerce\Migrator\ImporterCore\Interfaces\PlatformFetcherInterface;
 use WooCommerce\Migrator\ImporterCore\Interfaces\PlatformMapperInterface;
 
 /**
  * Test cases for the core interfaces.
  */
-class InterfaceTest extends \PHPUnit\Framework\TestCase {
+class InterfaceTest extends TestCase {
 
 	/**
 	 * Test that the PlatformFetcherInterface exists.
@@ -26,4 +30,4 @@ class InterfaceTest extends \PHPUnit\Framework\TestCase {
 	public function test_platform_mapper_interface_exists() {
 		$this->assertTrue( interface_exists( PlatformMapperInterface::class ) );
 	}
-} 
+}

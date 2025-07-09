@@ -13,6 +13,8 @@
  * @package         WooCommerce\Migrator
  */
 
+declare( strict_types=1 );
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -30,8 +32,8 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 add_action(
 	'cli_init',
 	function () {
-		$registrar = new WooCommerce\Migrator\CLI\Command_Registrar();
+		$registrar = new WooCommerce\Migrator\CLI\CommandRegistrar();
 		$cli       = new WooCommerce\Migrator\CLI\CLI( $registrar );
 		$cli->register_commands();
 	}
-); 
+);

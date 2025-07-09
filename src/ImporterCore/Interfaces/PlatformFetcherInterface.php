@@ -5,6 +5,8 @@
  * @package WooCommerce\Migrator\ImporterCore\Interfaces
  */
 
+declare( strict_types=1 );
+
 namespace WooCommerce\Migrator\ImporterCore\Interfaces;
 
 /**
@@ -29,13 +31,13 @@ interface PlatformFetcherInterface {
 	/**
 	 * Fetches the estimated total count of items available for migration.
 	 *
-	 * Used primarily for progress indicators. Returning null is acceptable
-	 * if the platform API doesn't easily provide a total count.
+	 * Used primarily for progress indicators. If a total count is not available,
+	 * this method should return 0.
 	 *
 	 * @param array $args Arguments for filtering the count (e.g., status, date range).
 	 *                    Specific arguments depend on the implementation.
 	 *
-	 * @return ?int The total estimated count, or null.
+	 * @return int The total estimated count.
 	 */
-	public function fetch_total_count( array $args ): ?int;
-} 
+	public function fetch_total_count( array $args ): int;
+}

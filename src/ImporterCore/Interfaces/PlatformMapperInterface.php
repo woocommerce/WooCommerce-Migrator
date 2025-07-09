@@ -5,6 +5,8 @@
  * @package WooCommerce\Migrator\ImporterCore\Interfaces
  */
 
+declare( strict_types=1 );
+
 namespace WooCommerce\Migrator\ImporterCore\Interfaces;
 
 /**
@@ -22,4 +24,4 @@ interface PlatformMapperInterface {
 	 *               The specific structure of this array needs to be defined and adhered to.
 	 */
 	public function map_product_data( object $platform_data ): array;
-} 
+}

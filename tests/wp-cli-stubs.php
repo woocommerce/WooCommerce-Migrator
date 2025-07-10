@@ -9,6 +9,11 @@
 
 if ( ! class_exists( 'WP_CLI' ) ) {
 	class WP_CLI {
+		/**
+		 * An array of mock return values for the readline method.
+		 *
+		 * @var array
+		 */
 		private static $readline_returns = array();
 
 		public static function set_readline_returns( array $values ) {

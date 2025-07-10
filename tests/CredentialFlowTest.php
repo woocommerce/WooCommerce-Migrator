@@ -27,7 +27,7 @@ class CredentialFlowTest extends TestCase {
 	/**
 	 * Clean up options after each test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void { // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 		parent::tearDown();
 		delete_option( self::SHOPIFY_OPTION_NAME );
 		WP_CLI::reset();

@@ -42,7 +42,7 @@ class SetupCommand extends BaseCommand {
 			WP_CLI::error( "The specified platform '{$platform}' is not supported." );
 		}
 
-		WP_CLI::log( 'Configuring credentials for Shopify...' );
+		WP_CLI::log( 'Configuring credentials for ' . ucfirst( $platform ) . '...' );
 
 		$required_fields = array(
 			'api_key'  => 'Enter your Shopify API Access Token:',

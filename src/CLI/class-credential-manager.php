@@ -113,7 +113,7 @@ class CredentialManager {
 			return WP_CLI::readline( $prompt );
 		}
 
-		echo esc_html( $prompt );
+		WP_CLI::line( $prompt );
 		return trim( fgets( STDIN ) );
 	}
 }

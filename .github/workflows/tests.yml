@@ -2,7 +2,10 @@ name: Run Tests
 
 on:
   push:
+    branches:
+      - trunk
   pull_request:
+    types: [opened, synchronize]
 
 jobs:
   test:

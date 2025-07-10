@@ -14,8 +14,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          working-directory: WooCommerce-Migrator
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -27,7 +25,6 @@ jobs:
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-        working-directory: WooCommerce-Migrator
 
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -39,8 +36,6 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
-        working-directory: WooCommerce-Migrator
 
       - name: Run linting checks
-        run: composer lint
-        working-directory: WooCommerce-Migrator 
+        run: composer lint 

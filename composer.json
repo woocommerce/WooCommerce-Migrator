@@ -38,7 +38,7 @@
         "format": "phpcbf",
         "test:setup": "bash bin/install-wp-tests.sh ${DB_NAME:-test_db} ${DB_USER:-root} ${DB_PASS:-''} ${DB_HOST:-localhost}",
         "test": [
-            "@composer dump-autoload -o",
+            "composer dump-autoload -o",
             "phpunit"
         ]
     }

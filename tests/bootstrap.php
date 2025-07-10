@@ -10,6 +10,10 @@ declare( strict_types=1 );
 // Load the Composer autoloader to make all dependencies available.
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
+// Load WP-CLI stubs.
+require_once __DIR__ . '/wp-cli-stubs.php';
+require_once __DIR__ . '/wp-cli-exit-exception-stub.php';
+
 // First, check if we're loaded from within a typical WP test environment.
 if ( ! defined( 'WP_TESTS_DIR' ) ) {
 	$wp_tests_dir = getenv( 'WP_TESTS_DIR' );

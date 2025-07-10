@@ -33,6 +33,9 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
+    "require": {
+        "php": "^7.4"
+    },
     "scripts": {
         "lint": "phpcs",
         "format": "phpcbf",

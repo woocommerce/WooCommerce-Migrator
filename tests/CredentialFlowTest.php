@@ -27,7 +27,7 @@ class CredentialFlowTest extends TestCase {
 	/**
 	 * Clean up options after each test.
 	 */
-	public function tearDown(): void { // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
+	public function tearDown(): void {
 		parent::tearDown();
 		delete_option( self::SHOPIFY_OPTION_NAME );
 		WP_CLI::reset();
@@ -37,12 +37,15 @@ class CredentialFlowTest extends TestCase {
 	 * Test that the reset command deletes the credentials.
 	 */
 	public function test_reset_command_deletes_credentials() {
+		// Arrange: Manually set the credential option.
 		update_option( self::SHOPIFY_OPTION_NAME, wp_json_encode( array( 'api_key' => 'test' ) ) );
 		$this->assertTrue( get_option( self::SHOPIFY_OPTION_NAME, false ) !== false );
 
+		// Act: Execute the reset command.
 		$command = new ResetCommand();
 		$command( array(), array() );
 
+		// Assert: Retrieve the option and assert that it no longer exists.
 		$this->assertFalse( get_option( self::SHOPIFY_OPTION_NAME, false ) );
 	}
 
@@ -50,8 +53,11 @@ class CredentialFlowTest extends TestCase {
 	 * Test that the products command proceeds when credentials exist.
 	 */
 	public function test_products_command_proceeds_when_credentials_exist() {
+		// Arrange: Manually set the credential option.
 		update_option( self::SHOPIFY_OPTION_NAME, wp_json_encode( array( 'api_key' => 'test' ) ) );
 
+		// Act & Assert: Execute the command and expect a success message.
+		// We can't easily capture output, but we can confirm it doesn't error out.
 		$command = new ProductsCommand();
 		try {
 			$command( array(), array() );
@@ -66,9 +72,11 @@ class CredentialFlowTest extends TestCase {
 	 * Test that the products command prompts and saves credentials if they do not exist.
 	 */
 	public function test_products_command_prompts_for_credentials_if_not_set() {
+		// Arrange: Ensure the option is deleted.
 		delete_option( self::SHOPIFY_OPTION_NAME );
 		$this->assertFalse( get_option( self::SHOPIFY_OPTION_NAME, false ) );
 
+		// Arrange: Set the mock return values for the readline prompt.
 		WP_CLI::set_readline_returns(
 			array(
 				'test_api_key',
@@ -76,9 +84,11 @@ class CredentialFlowTest extends TestCase {
 			)
 		);
 
+		// Act: Run the products command.
 		$command = new ProductsCommand();
 		$command( array(), array() );
 
+		// Assert: Check that credentials have been saved.
 		$saved_credentials_json = get_option( self::SHOPIFY_OPTION_NAME, false );
 		$this->assertNotFalse( $saved_credentials_json );
 
@@ -93,9 +103,11 @@ class CredentialFlowTest extends TestCase {
 	 * Test that the setup command prompts for and saves credentials.
 	 */
 	public function test_setup_command_saves_credentials() {
+		// Arrange: Ensure the option is deleted.
 		delete_option( self::SHOPIFY_OPTION_NAME );
 		$this->assertFalse( get_option( self::SHOPIFY_OPTION_NAME, false ) );
 
+		// Arrange: Set the mock return values for the readline prompt.
 		WP_CLI::set_readline_returns(
 			array(
 				'setup_api_key',
@@ -103,9 +115,11 @@ class CredentialFlowTest extends TestCase {
 			)
 		);
 
+		// Act: Run the setup command.
 		$command = new SetupCommand();
 		$command( array(), array() );
 
+		// Assert: Check that credentials have been saved.
 		$saved_credentials_json = get_option( self::SHOPIFY_OPTION_NAME, false );
 		$this->assertNotFalse( $saved_credentials_json );
 

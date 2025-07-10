@@ -1,16 +1,19 @@
 <?php
 /**
- * Plugin Name:     WooCommerce Migrator
- * Plugin URI:      https://github.com/woocommerce/woocommerce-migrator
- * Description:     CLI commands to migrate data to WooCommerce from other platforms.
- * Version:         1.0.0
- * Author:          WooCommerce
- * Author URI:      https://woocommerce.com
- * License:         GPL-3.0-or-later
- * License URI:     https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain:     woocommerce-migrator
+ * Plugin Name:          WooCommerce Migrator
+ * Plugin URI:           https://github.com/woocommerce/woocommerce-migrator
+ * Description:          CLI commands to migrate data to WooCommerce from other platforms.
+ * Version:              1.0.0
+ * Author:               WooCommerce
+ * Author URI:           https://woocommerce.com
+ * License:              GPL-3.0-or-later
+ * License URI:          https://www.gnu.org/licenses/gpl-3.0.html
+ * Text Domain:          woocommerce-migrator
+ * Requires PHP:         7.4
+ * Requires at least:    6.3
+ * WC requires at least: 8.9
  *
- * @package         WooCommerce\Migrator
+ * @package              WooCommerce\Migrator
  */
 
 declare( strict_types=1 );

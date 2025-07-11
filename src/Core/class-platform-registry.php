@@ -32,7 +32,7 @@ class PlatformRegistry {
 	 *
 	 * @var array
 	 */
-	private $platforms = [];
+	private $platforms = array();
 
 	/**
 	 * Private constructor to prevent direct instantiation.
@@ -59,7 +59,7 @@ class PlatformRegistry {
 	 * It also validates that each registered platform provides both a fetcher and a mapper class.
 	 */
 	private function load_platforms() {
-		$platforms = apply_filters( 'wc_migrator_register_platform', [] );
+		$platforms = apply_filters( 'wc_migrator_register_platform', array() );
 
 		if ( ! is_array( $platforms ) ) {
 			return;
@@ -141,4 +141,4 @@ class PlatformRegistry {
 
 		return new $mapper_class();
 	}
-} 
+}

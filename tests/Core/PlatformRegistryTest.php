@@ -18,11 +18,11 @@ use InvalidArgumentException;
  */
 class MockFetcher implements PlatformFetcherInterface {
 	public function fetch_batch( array $args ): array {
-		return [
-			'items'       => [],
+		return array(
+			'items'       => array(),
 			'cursor'      => null,
 			'hasNextPage' => false,
-		];
+		);
 	}
 
 	public function fetch_total_count( array $args ): int {
@@ -35,7 +35,7 @@ class MockFetcher implements PlatformFetcherInterface {
  */
 class MockMapper implements PlatformMapperInterface {
 	public function map_product_data( object $platform_data ): array {
-		return [];
+		return array();
 	}
 }
 
@@ -144,10 +144,10 @@ class PlatformRegistryTest extends TestCase {
 	/**
 	 * Clean up filters after each test.
 	 */
-	public function tearDown() : void {
+	public function tearDown(): void {
 		parent::tearDown();
 		remove_all_filters( 'wc_migrator_register_platform' );
 		// Reset the singleton to ensure a clean state for the next test.
 		$this->reset_singleton( PlatformRegistry::class, 'instance' );
 	}
-} 
+}

@@ -18,6 +18,7 @@ jobs:
         php-version: ['7.4', '8.3']
         wp-version: ['6.4', 'latest']
         wc-version: ['8.7.0', 'latest']
+        # Exclude WC 8.7.0 on PHP 8.3 as it's not an officially supported combination and may cause noisy test failures.
         exclude:
           - php-version: '8.3'
             wc-version: '8.7.0'

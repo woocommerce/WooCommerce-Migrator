@@ -9,7 +9,12 @@ on:
 
 jobs:
   test:
+    name: Tests (PHP ${{ matrix.php-version }})
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0', '8.3']
 
     services:
       mysql:
@@ -28,7 +33,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: ${{ matrix.php-version }}
           extensions: mbstring, xml, ctype, json, dom, zip, mysqli
           coverage: none
 

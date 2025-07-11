@@ -72,11 +72,10 @@ jobs:
       - name: Install WooCommerce
         run: |
           if [ "${{ matrix.wc-version }}" == "latest" ]; then
-            svn co https://plugins.svn.wordpress.org/woocommerce/trunk/ ~/.wp-env/some-guid/woocommerce
+            svn co https://plugins.svn.wordpress.org/woocommerce/trunk/ /tmp/wordpress/wp-content/plugins/woocommerce
           else
-            svn co https://plugins.svn.wordpress.org/woocommerce/tags/${{ matrix.wc-version }}/ ~/.wp-env/some-guid/woocommerce
+            svn co https://plugins.svn.wordpress.org/woocommerce/tags/${{ matrix.wc-version }}/ /tmp/wordpress/wp-content/plugins/woocommerce
           fi
-          mv ~/.wp-env/some-guid/woocommerce /tmp/wordpress-tests-lib/plugins/woocommerce
 
       - name: Run tests
         run: composer test 

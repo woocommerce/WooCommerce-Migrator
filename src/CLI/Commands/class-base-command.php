@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace WooCommerce\Migrator\CLI\Commands;
 
+use WooCommerce\Migrator\CLI\CredentialManager;
 use WP_CLI;
 
 /**
@@ -31,5 +32,31 @@ abstract class BaseCommand {
 		}
 
 		return $platform;
+	}
+
+	/**
+	 * Handles the interactive credential setup process.
+	 *
+	 * @param string $platform The platform slug.
+	 *
+	 * @return void
+	 */
+	protected function handle_credential_setup( string $platform ): void {
+		$manager = new CredentialManager( $platform );
+
+		// For now, we only support Shopify.
+		if ( 'shopify' !== $platform ) {
+			WP_CLI::error( "The specified platform '{$platform}' is not supported for setup." );
+		}
+
+		WP_CLI::log( 'Configuring credentials for ' . ucfirst( $platform ) . '...' );
+
+		$required_fields = array(
+			'api_key'  => 'Enter your Shopify API Access Token:',
+			'shop_url' => 'Enter your Shopify store URL (e.g., my-store.myshopify.com):',
+		);
+
+		$credentials = $manager->prompt_for_credentials( $required_fields );
+		$manager->save_credentials( $credentials );
 	}
 }

@@ -39,20 +39,7 @@ class ProductsCommand extends BaseCommand {
 
 		if ( ! $manager->has_credentials() ) {
 			WP_CLI::log( "Credentials for '{$platform}' not found. Let's set them up." );
-
-			// For now, we only support Shopify.
-			if ( 'shopify' !== $platform ) {
-				WP_CLI::error( "The specified platform '{$platform}' is not supported for automatic setup." );
-			}
-
-			$required_fields = array(
-				'api_key'  => 'Enter your Shopify API Access Token:',
-				'shop_url' => 'Enter your Shopify store URL (e.g., my-store.myshopify.com):',
-			);
-
-			$credentials = $manager->prompt_for_credentials( $required_fields );
-			$manager->save_credentials( $credentials );
-
+			$this->handle_credential_setup( $platform );
 			WP_CLI::success( 'Credentials saved successfully. Please run the command again to begin the migration.' );
 			return;
 		}

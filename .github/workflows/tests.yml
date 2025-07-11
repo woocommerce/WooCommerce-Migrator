@@ -17,10 +17,10 @@ jobs:
       matrix:
         php-version: ['7.4', '8.3']
         wp-version: ['6.4', 'latest']
-        wc-version: ['8.7', 'latest']
+        wc-version: ['8.7.0', 'latest']
         exclude:
           - php-version: '8.3'
-            wc-version: '8.7'
+            wc-version: '8.7.0'
 
     services:
       mysql:

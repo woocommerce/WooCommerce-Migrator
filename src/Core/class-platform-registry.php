@@ -59,6 +59,14 @@ class PlatformRegistry {
 	 * It also validates that each registered platform provides both a fetcher and a mapper class.
 	 */
 	private function load_platforms() {
+		/**
+		 * Filters the list of registered migration platforms.
+		 *
+		 * @param array $platforms An associative array of platform configurations.
+		 *                         Each key is a unique platform ID (e.g., 'shopify'), and the value
+		 *                         is another array containing 'name', 'fetcher', and 'mapper' class names.
+		 * @since 1.0.0
+		 */
 		$platforms = apply_filters( 'wc_migrator_register_platform', array() );
 
 		if ( ! is_array( $platforms ) ) {
@@ -105,13 +113,25 @@ class PlatformRegistry {
 		$platform = $this->get_platform( $platform_id );
 
 		if ( ! $platform ) {
-			throw new InvalidArgumentException( "Platform '$platform_id' not found." );
+			throw new InvalidArgumentException(
+				sprintf(
+					/* translators: %s: Platform ID */
+					esc_html__( 'Platform %s not found.', 'woocommerce-migrator' ),
+					esc_html( $platform_id )
+				)
+			);
 		}
 
 		$fetcher_class = $platform['fetcher'];
 
 		if ( ! class_exists( $fetcher_class ) || ! in_array( PlatformFetcherInterface::class, class_implements( $fetcher_class ), true ) ) {
-			throw new InvalidArgumentException( "Invalid fetcher class for platform '$platform_id'." );
+			throw new InvalidArgumentException(
+				sprintf(
+					/* translators: %s: Platform ID */
+					esc_html__( 'Invalid fetcher class for platform %s.', 'woocommerce-migrator' ),
+					esc_html( $platform_id )
+				)
+			);
 		}
 
 		return new $fetcher_class();
@@ -130,13 +150,25 @@ class PlatformRegistry {
 		$platform = $this->get_platform( $platform_id );
 
 		if ( ! $platform ) {
-			throw new InvalidArgumentException( "Platform '$platform_id' not found." );
+			throw new InvalidArgumentException(
+				sprintf(
+					/* translators: %s: Platform ID */
+					esc_html__( 'Platform %s not found.', 'woocommerce-migrator' ),
+					esc_html( $platform_id )
+				)
+			);
 		}
 
 		$mapper_class = $platform['mapper'];
 
 		if ( ! class_exists( $mapper_class ) || ! in_array( PlatformMapperInterface::class, class_implements( $mapper_class ), true ) ) {
-			throw new InvalidArgumentException( "Invalid mapper class for platform '$platform_id'." );
+			throw new InvalidArgumentException(
+				sprintf(
+					/* translators: %s: Platform ID */
+					esc_html__( 'Invalid mapper class for platform %s.', 'woocommerce-migrator' ),
+					esc_html( $platform_id )
+				)
+			);
 		}
 
 		return new $mapper_class();

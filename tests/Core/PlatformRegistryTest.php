@@ -8,36 +8,10 @@
 namespace WooCommerce\Migrator\Tests\Core;
 
 use WooCommerce\Migrator\Core\PlatformRegistry;
-use WooCommerce\Migrator\ImporterCore\Interfaces\PlatformFetcherInterface;
-use WooCommerce\Migrator\ImporterCore\Interfaces\PlatformMapperInterface;
+use WooCommerce\Migrator\Tests\Mocks\MockFetcher;
+use WooCommerce\Migrator\Tests\Mocks\MockMapper;
 use WooCommerce\Migrator\Tests\TestCase;
 use InvalidArgumentException;
-
-/**
- * A mock fetcher class for testing purposes.
- */
-class MockFetcher implements PlatformFetcherInterface {
-	public function fetch_batch( array $args ): array {
-		return array(
-			'items'       => array(),
-			'cursor'      => null,
-			'hasNextPage' => false,
-		);
-	}
-
-	public function fetch_total_count( array $args ): int {
-		return 0;
-	}
-}
-
-/**
- * A mock mapper class for testing purposes.
- */
-class MockMapper implements PlatformMapperInterface {
-	public function map_product_data( object $platform_data ): array {
-		return array();
-	}
-}
 
 /**
  * PlatformRegistryTest class.

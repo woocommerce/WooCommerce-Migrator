@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace WooCommerce\Migrator\Tests\Platforms\Shopify;
 
+use WooCommerce\Migrator\CLI\Commands\List_Command;
 use WooCommerce\Migrator\Core\PlatformRegistry;
 use WooCommerce\Migrator\Platforms\Shopify\ShopifyFetcher;
 use WooCommerce\Migrator\Platforms\Shopify\ShopifyMapper;
@@ -55,7 +56,6 @@ class ShopifyPlatformTest extends TestCase {
 
 		$platforms = $registry->get_platforms();
 
-		// Assert that Shopify platform exists.
 		$this->assertArrayHasKey( 'shopify', $platforms, 'Shopify platform should be registered.' );
 
 		// Assert platform configuration is correct.
@@ -106,7 +106,6 @@ class ShopifyPlatformTest extends TestCase {
 		);
 		$this->assertEquals( $expected_batch, $batch_result, 'ShopifyFetcher should return stub batch data.' );
 
-		// Test fetch_total_count method returns 0.
 		$count_result = $fetcher->fetch_total_count( array() );
 		$this->assertEquals( 0, $count_result, 'ShopifyFetcher should return 0 for total count.' );
 	}
@@ -120,7 +119,6 @@ class ShopifyPlatformTest extends TestCase {
 		// Create a mock platform data object.
 		$platform_data = (object) array( 'id' => 'test_product_id' );
 
-		// Test map_product_data method returns empty array.
 		$mapped_result = $mapper->map_product_data( $platform_data );
 		$this->assertEquals( array(), $mapped_result, 'ShopifyMapper should return empty array for stub implementation.' );
 	}
@@ -138,7 +136,7 @@ class ShopifyPlatformTest extends TestCase {
 		$this->assertArrayHasKey( 'shopify', $platforms, 'Shopify platform should be available for listing.' );
 
 		// Verify the platform data structure matches what List_Command expects.
-		$shopify_config = $platforms['shopify'];
+		$shopify_config     = $platforms['shopify'];
 		$expected_list_item = array(
 			'id'      => 'shopify',
 			'name'    => 'Shopify',

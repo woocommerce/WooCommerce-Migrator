@@ -32,11 +32,11 @@ class ShopifyPlatform {
 	 */
 	private static function load_dependencies(): void {
 		$base_dir = __DIR__;
-		
+
 		if ( file_exists( $base_dir . '/class-shopify-fetcher.php' ) ) {
 			require_once $base_dir . '/class-shopify-fetcher.php';
 		}
-		
+
 		if ( file_exists( $base_dir . '/class-shopify-mapper.php' ) ) {
 			require_once $base_dir . '/class-shopify-mapper.php';
 		}

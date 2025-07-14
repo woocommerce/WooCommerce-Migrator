@@ -42,6 +42,7 @@
     "scripts": {
         "lint": "phpcs",
         "format": "phpcbf",
+        "dump": "composer dump-autoload -o",
         "test:setup": "bash bin/install-wp-tests.sh ${DB_NAME:-test_db} ${DB_USER:-root} ${DB_PASS:-''} ${DB_HOST:-localhost}",
         "test": [
             "composer dump-autoload -o",

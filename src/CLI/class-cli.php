@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace WooCommerce\Migrator\CLI;
 
+use WooCommerce\Migrator\CLI\Commands\List_Command;
 use WooCommerce\Migrator\CLI\Commands\ProductsCommand;
 use WooCommerce\Migrator\CLI\Commands\ResetCommand;
 use WooCommerce\Migrator\CLI\Commands\SetupCommand;
@@ -38,6 +39,14 @@ class CLI {
 	 * Registers the WP-CLI commands.
 	 */
 	public function register_commands() {
+		$this->registrar->add_command(
+			'wc migrate list',
+			List_Command::class,
+			array(
+				'shortdesc' => 'Lists all registered migration platforms.',
+			)
+		);
+
 		$this->registrar->add_command(
 			'wc migrate setup',
 			SetupCommand::class,

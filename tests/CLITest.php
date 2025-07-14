@@ -11,6 +11,7 @@ namespace WooCommerce\Migrator\Tests;
 
 use WooCommerce\Migrator\CLI\CLI;
 use WooCommerce\Migrator\CLI\CommandRegistrar;
+use WooCommerce\Migrator\CLI\Commands\List_Command;
 use WooCommerce\Migrator\CLI\Commands\ProductsCommand;
 use WooCommerce\Migrator\CLI\Commands\ResetCommand;
 use WooCommerce\Migrator\CLI\Commands\SetupCommand;
@@ -28,9 +29,10 @@ class CLITest extends TestCase {
 		$registrar = $this->createMock( CommandRegistrar::class );
 
 		// Expect the add_command method to be called three times with the correct parameters.
-		$registrar->expects( $this->exactly( 3 ) )
+		$registrar->expects( $this->exactly( 4 ) )
 			->method( 'add_command' )
 			->withConsecutive(
+				array( 'wc migrate list', List_Command::class, $this->anything() ),
 				array( 'wc migrate setup', SetupCommand::class, $this->anything() ),
 				array( 'wc migrate reset', ResetCommand::class, $this->anything() ),
 				array( 'wc migrate products', ProductsCommand::class, $this->anything() )

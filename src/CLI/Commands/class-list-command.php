@@ -21,13 +21,9 @@ class List_Command {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp wc migrate list
-	 *
-	 * @param array $args       Positional arguments.
-	 * @param array $assoc_args Associative arguments.
-	 *
-	 * @phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	 */
-	public function __invoke( $args, $assoc_args ) {
+	public function __invoke() {
+
 		$registry  = PlatformRegistry::get_instance();
 		$platforms = $registry->get_platforms();
 

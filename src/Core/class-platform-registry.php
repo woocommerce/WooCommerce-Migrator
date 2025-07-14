@@ -5,6 +5,8 @@
  * @package WooCommerce\Migrator\Core
  */
 
+declare( strict_types=1 );
+
 namespace WooCommerce\Migrator\Core;
 
 use InvalidArgumentException;
@@ -46,7 +48,7 @@ class PlatformRegistry {
 	 *
 	 * @return PlatformRegistry
 	 */
-	public static function get_instance() {
+	public static function get_instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
@@ -85,7 +87,7 @@ class PlatformRegistry {
 	 *
 	 * @return array
 	 */
-	public function get_platforms() {
+	public function get_platforms(): array {
 		return $this->platforms;
 	}
 
@@ -96,7 +98,7 @@ class PlatformRegistry {
 	 *
 	 * @return array|null The platform configuration or null if not found.
 	 */
-	public function get_platform( $platform_id ) {
+	public function get_platform( string $platform_id ): ?array {
 		return $this->platforms[ $platform_id ] ?? null;
 	}
 
@@ -109,7 +111,7 @@ class PlatformRegistry {
 	 *
 	 * @throws InvalidArgumentException If the platform is not found or the fetcher class is invalid.
 	 */
-	public function get_fetcher( $platform_id ) {
+	public function get_fetcher( string $platform_id ): PlatformFetcherInterface {
 		$platform = $this->get_platform( $platform_id );
 
 		if ( ! $platform ) {
@@ -146,7 +148,7 @@ class PlatformRegistry {
 	 *
 	 * @throws InvalidArgumentException If the platform is not found or the mapper class is invalid.
 	 */
-	public function get_mapper( $platform_id ) {
+	public function get_mapper( string $platform_id ): PlatformMapperInterface {
 		$platform = $this->get_platform( $platform_id );
 
 		if ( ! $platform ) {

@@ -25,7 +25,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 	 *
 	 * @throws ReflectionException If the class or property does not exist.
 	 */
-	protected function reset_singleton( string $class_name, string $property_name ) {
+	protected function reset_singleton( string $class_name, string $property_name ): void {
 		$reflection = new ReflectionClass( $class_name );
 		$property   = $reflection->getProperty( $property_name );
 		$property->setAccessible( true );

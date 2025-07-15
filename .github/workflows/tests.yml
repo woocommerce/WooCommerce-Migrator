@@ -1,4 +1,4 @@
-name: CI Tests
+name: Run Tests
 
 on:
   push:
@@ -9,12 +9,19 @@ on:
 
 jobs:
   test:
-    name: Tests (PHP ${{ matrix.php-version }})
+    name: PHP ${{ matrix.php-version }} - WP ${{ matrix.wp-version }} - WC ${{ matrix.wc-version }}
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        php-version: ['7.4', '8.0', '8.3']
+        php-version: ['7.4', '8.3']
+        wp-version: ['6.4', 'latest']
+        wc-version: ['8.7.0', 'latest']
+        # Exclude WC 8.7.0 on PHP 8.3 as it's not an officially supported combination and may cause noisy test failures.
+        exclude:
+          - php-version: '8.3'
+            wc-version: '8.7.0'
 
     services:
       mysql:
@@ -56,12 +63,20 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Set up WordPress test environment
-        run: composer test:setup
+        run: bash bin/install-wp-tests.sh test_db root root 127.0.0.1 ${{ matrix.wp-version }}
         env:
           DB_NAME: test_db
           DB_USER: root
           DB_PASS: root
           DB_HOST: 127.0.0.1
+
+      - name: Install WooCommerce
+        run: |
+          if [ "${{ matrix.wc-version }}" == "latest" ]; then
+            svn co https://plugins.svn.wordpress.org/woocommerce/trunk/ /tmp/wordpress/wp-content/plugins/woocommerce
+          else
+            svn co https://plugins.svn.wordpress.org/woocommerce/tags/${{ matrix.wc-version }}/ /tmp/wordpress/wp-content/plugins/woocommerce
+          fi
 
       - name: Run tests
         run: composer test 

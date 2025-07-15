@@ -17,7 +17,11 @@
     "autoload-dev": {
         "psr-4": {
             "WooCommerce\\Migrator\\Tests\\": "tests/"
-        }
+        },
+        "exclude-from-classmap": [
+            "tests/wp-cli-stubs.php",
+            "tests/wp-cli-exit-exception-stub.php"
+        ]
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
@@ -36,6 +40,9 @@
         "lint": "phpcs",
         "format": "phpcbf",
         "test:setup": "bash bin/install-wp-tests.sh ${DB_NAME:-test_db} ${DB_USER:-root} ${DB_PASS:-''} ${DB_HOST:-localhost}",
-        "test": "phpunit"
+        "test": [
+            "composer dump-autoload -o",
+            "phpunit"
+        ]
     }
 }

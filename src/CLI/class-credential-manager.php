@@ -21,14 +21,14 @@ class CredentialManager {
 	 *
 	 * @var string
 	 */
-	private $platform_slug;
+	private string $platform_slug;
 
 	/**
 	 * The WordPress option name for storing credentials.
 	 *
 	 * @var string
 	 */
-	private $option_name;
+	private string $option_name;
 
 	/**
 	 * Constructor.
@@ -45,7 +45,7 @@ class CredentialManager {
 	 *
 	 * @return array|null An associative array of credentials, or null if not found.
 	 */
-	public function get_credentials() {
+	public function get_credentials(): ?array {
 		$credentials_json = get_option( $this->option_name, false );
 		if ( ! $credentials_json ) {
 			return null;
@@ -74,7 +74,7 @@ class CredentialManager {
 	 *
 	 * @return array The collected credentials.
 	 */
-	public function prompt_for_credentials( array $fields ) {
+	public function prompt_for_credentials( array $fields ): array {
 		$credentials = array();
 		foreach ( $fields as $key => $prompt ) {
 			$credentials[ $key ] = $this->readline( $prompt . ' ' );
@@ -88,14 +88,14 @@ class CredentialManager {
 	 *
 	 * @param array $credentials An associative array of credentials.
 	 */
-	public function save_credentials( array $credentials ) {
+	public function save_credentials( array $credentials ): void {
 		update_option( $this->option_name, wp_json_encode( $credentials ) );
 	}
 
 	/**
 	 * Deletes credentials from the database.
 	 */
-	public function delete_credentials() {
+	public function delete_credentials(): void {
 		delete_option( $this->option_name );
 	}
 

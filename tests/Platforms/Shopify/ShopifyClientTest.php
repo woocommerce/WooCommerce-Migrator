@@ -49,10 +49,7 @@ class ShopifyClientTest extends TestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		global $mock_wp_remote_request_args, $mock_wp_remote_request_response, $mock_is_wp_error;
-		$mock_wp_remote_request_args     = array();
-		$mock_wp_remote_request_response = array();
-		$mock_is_wp_error                = false;
+		\WooCommerce\Migrator\Platforms\Shopify\init_test_mocks();
 
 		$this->client = new ShopifyClient( $this->domain, $this->token );
 	}
@@ -61,13 +58,12 @@ class ShopifyClientTest extends TestCase {
 	 * Test GraphQL request URL construction.
 	 */
 	public function test_graphql_request_url_construction() {
-		global $mock_wp_remote_request_args, $mock_wp_remote_request_response;
-		$mock_wp_remote_request_response = array(
+		$GLOBALS['mock_wp_remote_request_response'] = array(
 			'body'     => '{"data":{"shop":{"name":"Test Shop"}}}',
 			'response' => array( 'code' => 200 ),
 		);
 		$this->client->graphql_request( '{ shop { name } }' );
-		$this->assertSame( 'https://test-shop.myshopify.com/admin/api/2025-07/graphql.json', $mock_wp_remote_request_args[0] );
+		$this->assertSame( 'https://test-shop.myshopify.com/admin/api/2025-07/graphql.json', $GLOBALS['mock_wp_remote_request_args'][0] );
 	}
 
 	/**

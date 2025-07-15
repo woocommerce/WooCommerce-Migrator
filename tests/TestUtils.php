@@ -1,6 +1,6 @@
 <?php
 /**
- * Test Utilities
+ * Test Utilities - Mock WordPress functions for testing
  *
  * @package WooCommerce\Migrator\Tests
  */
@@ -11,9 +11,14 @@ namespace WooCommerce\Migrator\Platforms\Shopify;
 
 use WP_Error;
 
-$mock_wp_remote_request_args     = array();
-$mock_wp_remote_request_response = array();
-$mock_is_wp_error                = false;
+/**
+ * Initialize mock globals.
+ */
+function init_test_mocks(): void {
+	$GLOBALS['mock_wp_remote_request_args']     = array();
+	$GLOBALS['mock_wp_remote_request_response'] = array();
+	$GLOBALS['mock_is_wp_error']                = false;
+}
 
 /**
  * Mock for wp_remote_request.
@@ -24,68 +29,71 @@ $mock_is_wp_error                = false;
  * @return array|WP_Error
  */
 function wp_remote_request( $_url, $_args ) { // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-	global $mock_wp_remote_request_args, $mock_wp_remote_request_response;
-	$mock_wp_remote_request_args = func_get_args();
-	return $mock_wp_remote_request_response;
-}
-
-/**
- * Mock for is_wp_error.
- *
- * @param mixed $thing The item to check.
- *
- * @return bool
- */
-function is_wp_error( $thing ) {
-	global $mock_is_wp_error;
-	if ( $mock_is_wp_error ) {
-		return true;
-	}
-	return $thing instanceof WP_Error;
+	$GLOBALS['mock_wp_remote_request_args'] = func_get_args();
+	return $GLOBALS['mock_wp_remote_request_response'];
 }
 
 /**
  * Mock for wp_remote_retrieve_response_code.
  *
- * @param array|WP_Error $response The response.
+ * @param array $_response The response array.
  *
  * @return int
  */
-function wp_remote_retrieve_response_code( $response ) {
-	return $response['response']['code'] ?? 200;
+function wp_remote_retrieve_response_code( $_response ): int { // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInAfterLastUsed
+	return $_response['response']['code'] ?? 200;
 }
 
 /**
  * Mock for wp_remote_retrieve_body.
  *
- * @param array|WP_Error $response The response.
+ * @param array $_response The response array.
  *
  * @return string
  */
-function wp_remote_retrieve_body( $response ) {
-	return $response['body'] ?? '';
+function wp_remote_retrieve_body( $_response ): string { // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInAfterLastUsed
+	return $_response['body'] ?? '';
+}
+
+/**
+ * Mock for is_wp_error.
+ *
+ * @param mixed $thing The thing to check.
+ *
+ * @return bool
+ */
+function is_wp_error( $thing ): bool {
+	// If mock is explicitly set to true, return true regardless of input.
+	if ( $GLOBALS['mock_is_wp_error'] ?? false ) {
+		return true;
+	}
+	// Otherwise, check if it's actually a WP_Error instance.
+	return $thing instanceof \WP_Error;
 }
 
 /**
  * Mock for wp_json_encode.
  *
- * @param mixed $data The data to encode.
+ * @param mixed $_data The data to encode.
  *
  * @return string
  */
-function wp_json_encode( $data ) {
+function wp_json_encode( $_data ): string { // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInAfterLastUsed
 	// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
-	return json_encode( $data, JSON_UNESCAPED_SLASHES );
+	return json_encode( $_data );
 }
 
 /**
  * Mock for add_query_arg.
  *
- * @param array  $params The parameters to add.
- * @param string $url    The URL to add to.
+ * @param array  $args The query arguments.
+ * @param string $url  The URL.
  *
  * @return string
  */
-function add_query_arg( $params, $url ) {
-	return $url . '?' . http_build_query( $params );
+function add_query_arg( array $args, string $url ): string {
+	return $url . '?' . http_build_query( $args );
 }
+
+// Initialize mocks when this file is loaded.
+init_test_mocks();

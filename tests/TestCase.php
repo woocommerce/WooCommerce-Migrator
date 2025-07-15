@@ -29,7 +29,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 		$reflection = new ReflectionClass( $class_name );
 		$property   = $reflection->getProperty( $property_name );
 		$property->setAccessible( true );
-		$property->setValue( null );
+		$property->setValue( null, null );
 		$property->setAccessible( false );
 	}
 }

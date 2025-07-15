@@ -9,15 +9,18 @@
             "email": "woothemes@woocommerce.com"
         }
     ],
-    "autoload": {
-        "classmap": [
-            "src/"
-        ]
-    },
+    	"autoload": {
+		"classmap": [
+			"src/"
+		]
+	},
     "autoload-dev": {
         "psr-4": {
             "WooCommerce\\Migrator\\Tests\\": "tests/"
         },
+        "files": [
+            "tests/TestUtils.php"
+        ],
         "exclude-from-classmap": [
             "tests/wp-cli-stubs.php",
             "tests/wp-cli-exit-exception-stub.php"
@@ -37,7 +40,7 @@
         }
     },
     "require": {
-        "php": "^7.4 || ^8.0"
+        "php": ">=7.4"
     },
     "scripts": {
         "lint": "phpcs",

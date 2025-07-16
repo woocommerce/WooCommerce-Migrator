@@ -64,6 +64,9 @@ class PlatformRegistry {
 		/**
 		 * Filters the list of registered migration platforms.
 		 *
+		 * External platform plugins should hook into this filter to register themselves.
+		 * Each platform plugin is responsible for its own autoloading and initialization.
+		 *
 		 * @param array $platforms An associative array of platform configurations.
 		 *                         Each key is a unique platform ID (e.g., 'shopify'), and the value
 		 *                         is another array containing 'name', 'fetcher', and 'mapper' class names.

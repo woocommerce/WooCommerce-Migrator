@@ -32,6 +32,12 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
 }
 
+// For our default platform, we'll load the platform implementation.
+// External plugins would use the 'wc_migrator_register_platform' filter to register themselves.
+if ( file_exists( __DIR__ . '/src/Platforms/Shopify/class-shopify-platform.php' ) ) {
+	require_once __DIR__ . '/src/Platforms/Shopify/class-shopify-platform.php';
+}
+
 add_action(
 	'cli_init',
 	function () {

@@ -1,5 +1,5 @@
 > [!Note]
-> This WooCommerce Migrator was been moved into WooCommerce core.
+> This WooCommerce Migrator was been moved into [WooCommerce core](https://github.com/woocommerce/woocommerce/tree/trunk/plugins/woocommerce/src/Internal/CLI/Migrator).
 
 # WooCommerce Migrator
 

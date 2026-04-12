@@ -1,3 +1,6 @@
+> [!Note]
+> This WooCommerce Migrator was been moved into WooCommerce core.
+
 # WooCommerce Migrator
 
 A WP-CLI-based tool to migrate data from various e-commerce platforms to WooCommerce. The initial focus is on migrating products from Shopify.
